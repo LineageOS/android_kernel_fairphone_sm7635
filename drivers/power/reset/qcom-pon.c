@@ -19,12 +19,33 @@
 
 #define NO_REASON_SHIFT			0
 
+#define PON_SW_RESET_S2_CTL				0x62
+#define		PON_SW_RESET_S2_CTL_WARM_RST	0x01
+#define PON_SW_RESET_S2_CTL2				0x63
+#define		PON_SW_RESET_S2_CTL2_RST_EN	BIT(7)
+#define PON_SW_RESET_GO					0x64
+#define		PON_SW_RESET_GO_MAGIC		0xa5
+
+#define PON_PBS_INT_EN_SET				0x15
+#define		PON_PBS_INT_SW_RESET		BIT(5)
+#define PON_PBS_SW_RESET_SW_CTL				0x56
+#define PON_PBS_SW_RESET_GO				0x57
+
+struct qcom_pon;
+
+struct qcom_pon_data {
+	long reason_shift;
+	int (*sw_reset)(struct qcom_pon *pon);
+};
+
 struct qcom_pon {
 	struct device *dev;
 	struct regmap *regmap;
 	u32 baseaddr;
+	u32 pbs_baseaddr;
 	struct reboot_mode_driver reboot_mode;
 	long reason_shift;
+	const struct qcom_pon_data *data;
 };
 
 static int qcom_pon_reboot_mode_write(struct reboot_mode_driver *reboot,
@@ -42,6 +63,70 @@ static int qcom_pon_reboot_mode_write(struct reboot_mode_driver *reboot,
 		dev_err(pon->dev, "update reboot mode bits failed\n");
 
 	return ret;
+}
+
+static int qcom_pon_gen1_sw_reset(struct qcom_pon *pon)
+{
+	int ret;
+
+	ret = regmap_write(pon->regmap,
+			   pon->baseaddr + PON_SW_RESET_S2_CTL,
+			   PON_SW_RESET_S2_CTL_WARM_RST);
+	if (ret)
+		return ret;
+
+	ret = regmap_update_bits(pon->regmap,
+				 pon->baseaddr + PON_SW_RESET_S2_CTL2,
+				 PON_SW_RESET_S2_CTL2_RST_EN,
+				 PON_SW_RESET_S2_CTL2_RST_EN);
+	if (ret)
+		return ret;
+
+	return regmap_write(pon->regmap, pon->baseaddr + PON_SW_RESET_GO,
+			    PON_SW_RESET_GO_MAGIC);
+}
+
+static int qcom_pon_gen3_sw_reset(struct qcom_pon *pon)
+{
+	int ret;
+
+	ret = regmap_write(pon->regmap, pon->pbs_baseaddr + PON_PBS_SW_RESET_GO,
+			   0);
+	if (ret)
+		return ret;
+	mdelay(1);
+
+	ret = regmap_write(pon->regmap,
+			   pon->pbs_baseaddr + PON_PBS_SW_RESET_SW_CTL,
+			   PON_SW_RESET_S2_CTL_WARM_RST);
+	if (ret)
+		return ret;
+	mdelay(1);
+
+	ret = regmap_write(pon->regmap, pon->pbs_baseaddr + PON_PBS_INT_EN_SET,
+			   PON_PBS_INT_SW_RESET);
+	if (ret)
+		return ret;
+	mdelay(1);
+
+	return regmap_write(pon->regmap, pon->pbs_baseaddr + PON_PBS_SW_RESET_GO,
+			    PON_SW_RESET_GO_MAGIC);
+}
+
+static int qcom_pon_reset(struct sys_off_data *data)
+{
+	struct qcom_pon *pon = data->cb_data;
+
+	/* This serves as a fallback for a warm reset when it isn’t
+	 * supported by higher-priority handlers, such as fw/PSCI.
+	 */
+	if (data->mode != REBOOT_WARM)
+		return NOTIFY_DONE;
+
+	if (pon->data->sw_reset(pon))
+		return NOTIFY_BAD;
+
+	return NOTIFY_DONE;
 }
 
 static int qcom_pon_probe(struct platform_device *pdev)
@@ -67,7 +152,16 @@ static int qcom_pon_probe(struct platform_device *pdev)
 	if (error)
 		return error;
 
-	reason_shift = (long)of_device_get_match_data(&pdev->dev);
+	pon->data = of_device_get_match_data(&pdev->dev);
+	reason_shift = pon->data->reason_shift;
+
+	if (pon->data->sw_reset == qcom_pon_gen3_sw_reset) {
+		error = of_property_read_u32_index(pdev->dev.of_node, "reg", 1,
+						   &pon->pbs_baseaddr);
+		if (error)
+			return dev_err_probe(&pdev->dev, error,
+					     "missing pon_pbs reg\n");
+	}
 
 	if (reason_shift != NO_REASON_SHIFT) {
 		pon->reboot_mode.dev = &pdev->dev;
@@ -82,15 +176,40 @@ static int qcom_pon_probe(struct platform_device *pdev)
 
 	platform_set_drvdata(pdev, pon);
 
+	error = devm_register_sys_off_handler(&pdev->dev, SYS_OFF_MODE_RESTART,
+					      SYS_OFF_PRIO_DEFAULT, qcom_pon_reset, pon);
+	if (error)
+		return dev_err_probe(&pdev->dev, error, "reboot registration fail\n");
+
 	return devm_of_platform_populate(&pdev->dev);
 }
 
+static const struct qcom_pon_data qcom_pon_gen1_data = {
+	.reason_shift = GEN1_REASON_SHIFT,
+	.sw_reset = qcom_pon_gen1_sw_reset,
+};
+
+static const struct qcom_pon_data qcom_pon_gen2_data = {
+	.reason_shift = GEN2_REASON_SHIFT,
+	.sw_reset = qcom_pon_gen1_sw_reset,
+};
+
+static const struct qcom_pon_data qcom_pon_gen3_data = {
+	.reason_shift = GEN2_REASON_SHIFT,
+	.sw_reset = qcom_pon_gen3_sw_reset,
+};
+
+static const struct qcom_pon_data qcom_pon_pm8941_data = {
+	.reason_shift = NO_REASON_SHIFT,
+	.sw_reset = qcom_pon_gen1_sw_reset,
+};
+
 static const struct of_device_id qcom_pon_id_table[] = {
-	{ .compatible = "qcom,pm8916-pon", .data = (void *)GEN1_REASON_SHIFT },
-	{ .compatible = "qcom,pm8941-pon", .data = (void *)NO_REASON_SHIFT },
-	{ .compatible = "qcom,pms405-pon", .data = (void *)GEN1_REASON_SHIFT },
-	{ .compatible = "qcom,pm8998-pon", .data = (void *)GEN2_REASON_SHIFT },
-	{ .compatible = "qcom,pmk8350-pon", .data = (void *)GEN2_REASON_SHIFT },
+	{ .compatible = "qcom,pm8916-pon", .data = &qcom_pon_gen1_data },
+	{ .compatible = "qcom,pm8941-pon", .data = &qcom_pon_pm8941_data },
+	{ .compatible = "qcom,pms405-pon", .data = &qcom_pon_gen1_data },
+	{ .compatible = "qcom,pm8998-pon", .data = &qcom_pon_gen2_data },
+	{ .compatible = "qcom,pmk8350-pon", .data = &qcom_pon_gen3_data },
 	{ }
 };
 MODULE_DEVICE_TABLE(of, qcom_pon_id_table);
