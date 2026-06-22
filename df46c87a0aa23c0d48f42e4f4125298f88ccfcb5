@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "149a16e2_11da9ad3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2026-06-22T17:55:01Z",
+      "side": 1,
+      "message": "Wrong authorship and incomplete commit",
+      "revId": "df46c87a0aa23c0d48f42e4f4125298f88ccfcb5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
