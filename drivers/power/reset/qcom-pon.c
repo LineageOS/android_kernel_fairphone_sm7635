@@ -195,7 +195,7 @@ static const struct qcom_pon_data qcom_pon_gen2_data = {
 };
 
 static const struct qcom_pon_data qcom_pon_gen3_data = {
-	.reason_shift = GEN2_REASON_SHIFT,
+	.reason_shift = NO_REASON_SHIFT,
 	.sw_reset = qcom_pon_gen3_sw_reset,
 };
 
