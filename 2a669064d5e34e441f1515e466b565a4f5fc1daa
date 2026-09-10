@@ -16,6 +16,23 @@
       "message": "All these should go to common kernel if we want them",
       "revId": "2a669064d5e34e441f1515e466b565a4f5fc1daa",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2657855c_20d76f28",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 29415
+      },
+      "writtenOn": "2026-09-10T14:59:00Z",
+      "side": 1,
+      "message": "Waiting on feedback from mailing list for this, it looks the register moved to PBS, at the same offset so the reason shift would be the same, but driver would need to be modified to read from PBS instead of HLOS for this.",
+      "revId": "2a669064d5e34e441f1515e466b565a4f5fc1daa",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
