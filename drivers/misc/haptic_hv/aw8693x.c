@@ -1712,6 +1712,10 @@ static void aw8693x_misc_para_init(struct aw_haptic *aw_haptic)
 	haptic_hv_i2c_reads(aw_haptic, AW8693X_REG_WAVCFG1, reg_val, AW_I2C_BYTE_EIGHT);
 	aw_haptic->index = reg_val[0];
 	memcpy(aw_haptic->seq, reg_val, AW_SEQUENCER_SIZE);
+	/* Set wait slot to 64 samples */
+	haptic_hv_i2c_write_bits(aw_haptic, AW8693X_REG_WAVCFG13,
+				 AW8693X_BIT_WAVCFG13_WAITSLOT_MASK,
+				 AW8693X_BIT_WAVCFG13_WAITSLOT_64);
 	/* Set gain_bypass */
 	haptic_hv_i2c_write_bits(aw_haptic, AW8693X_REG_SYSCTRL4,
 				 AW8693X_BIT_SYSCTRL4_GAIN_BYPASS_MASK,
