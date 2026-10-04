@@ -80,6 +80,7 @@
 #define AW_RAMDATA_RD_BUFFER_SIZE		(1024)
 #define AW_RAMDATA_WR_BUFFER_SIZE		(2048)
 #define AW_EFFECT_NUMBER			(3)
+#define AW_RAM_WAVE_MAX				(16)
 #define AW_GLBRD_STATE_MASK			(15<<0)
 #define AW_STATE_STANDBY			(0x00)
 #define AW_STATE_RTP				(0x08)
@@ -591,6 +592,7 @@ struct aw_haptic_ram {
 	uint8_t version;
 	uint8_t ram_shift;
 	uint8_t baseaddr_shift;
+	uint16_t wave_len[AW_RAM_WAVE_MAX + 1];
 };
 
 struct aw_haptic_ctr {
