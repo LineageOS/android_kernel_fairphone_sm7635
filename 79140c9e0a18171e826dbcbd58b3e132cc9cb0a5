@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cde6d717_54ef262f",
+        "filename": "drivers/misc/haptic_hv/haptic_hv_reg.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 2974,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2026-10-04T23:50:04Z",
+      "side": 1,
+      "message": "Make this a single line like the other sections. Documentation source should be in the commit message instead of here, preferably including a public link.",
+      "range": {
+        "startLine": 2970,
+        "startChar": 0,
+        "endLine": 2974,
+        "endChar": 3
+      },
+      "revId": "79140c9e0a18171e826dbcbd58b3e132cc9cb0a5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
