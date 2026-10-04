@@ -482,6 +482,34 @@ static void ram_play(struct aw_haptic *aw_haptic, uint8_t mode)
 	aw_haptic->func->play_go(aw_haptic, true);
 }
 
+/*
+ * haptic_ram.bin format: checksum, base address, SRAM image
+ * SRAM image format: version byte, {start, end} address per wave, wave data
+ * AW8693X datasheet V1.4, Dec. 2023, page 20,21
+ */
+static void ram_parse_wave_len(struct aw_haptic *aw_haptic, struct aw_haptic_container *aw_fw)
+{
+	uint8_t *tbl = aw_fw->data + aw_haptic->ram.ram_shift + 1; /* skip version byte */
+	uint32_t start = 0;
+	uint32_t end = 0;
+	int i = 0;
+
+	memset(aw_haptic->ram.wave_len, 0, sizeof(aw_haptic->ram.wave_len));
+	for (i = 1; i <= aw_haptic->ram.ram_num && i <= AW_RAM_WAVE_MAX; i++, tbl += 4) {
+		if (tbl + 4 > aw_fw->data + aw_fw->len)
+			break;
+		start = tbl[0] << 8 | tbl[1];
+		end = tbl[2] << 8 | tbl[3];
+		if (start < aw_haptic->ram.base_addr || end < start) {
+			aw_err("wave %d: bad address range 0x%04x-0x%04x", i, start, end);
+			continue;
+		}
+		aw_haptic->ram.wave_len[i] = end - start + 1;
+		aw_info("wave %d: 0x%04x-0x%04x, %u samples", i, start, end,
+			aw_haptic->ram.wave_len[i]);
+	}
+}
+
 static int get_ram_num(struct aw_haptic *aw_haptic)
 {
 	uint8_t wave_addr[2] = {0};
@@ -1690,6 +1718,7 @@ static void ram_load(const struct firmware *cont, void *context)
 		mutex_unlock(&aw_haptic->lock);
 		aw_info("ram firmware update complete!");
 		get_ram_num(aw_haptic);
+		ram_parse_wave_len(aw_haptic, aw_fw);
 	}
 	kfree(aw_fw);
 
