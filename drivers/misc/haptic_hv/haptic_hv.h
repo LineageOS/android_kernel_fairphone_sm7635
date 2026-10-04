@@ -82,6 +82,7 @@
 #define AW_EFFECT_NUMBER			(3)
 #define AW_RAM_WAVE_MAX				(16)
 #define AW_RAM_SAMPLE_RATE			(24000)
+#define AW_FF_CUSTOM_DATA_LEN			(3)
 #define AW_SEQ_WAIT_FLAG			(0x80)
 #define AW_SEQ_WAIT_UNIT_SAMPLES		(64)
 #define AW_SEQ_WAIT_MS(ms)			(AW_SEQ_WAIT_FLAG | \
@@ -704,6 +705,8 @@ struct aw_haptic {
 	uint8_t ram_vbat_comp;
 	uint8_t seq[AW_SEQUENCER_SIZE];
 	uint8_t loop[AW_SEQUENCER_SIZE];
+	uint8_t ff_seq[AW_SEQUENCER_SIZE];
+	uint8_t ff_seq_len;
 	uint8_t name[15];
 	uint8_t trim_lra_boundary;
 
