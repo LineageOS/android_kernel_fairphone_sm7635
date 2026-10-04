@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bda26517_f7f4a92f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2026-10-04T23:46:43Z",
+      "side": 1,
+      "message": "POP and THUD effects are deprecated, they are primitives now. See https://review.lineageos.org/q/I4cd0f84d97ea45c7a5c442df8174a597445df29a\n\nShould we implement all primitives as well?\n\nCLICK\nTHUD\nSPIN\nQUICK_RISE\nSLOW_RISE\nQUICK_FALL\nLIGHT_TICK\nLOW_TICK",
+      "revId": "111f02d4a28248110032a067e528fe235d47ae7a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
