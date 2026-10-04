@@ -967,12 +967,12 @@ struct aw_ff_effect {
 };
 
 static const struct aw_ff_effect aw_ff_effects[] = {
-	{ AW_FF_EFFECT_CLICK,		{ 1 } },
+	{ AW_FF_EFFECT_CLICK,		{ 3 } },
 	{ AW_FF_EFFECT_DOUBLE_CLICK,	{ 1, AW_SEQ_WAIT_MS(100), 1 } },
 	{ AW_FF_EFFECT_TICK,		{ 3 } },
-	{ AW_FF_EFFECT_THUD,		{ 2 } },
-	{ AW_FF_EFFECT_POP,		{ 3 } },
-	{ AW_FF_EFFECT_HEAVY_CLICK,	{ 1 } },
+	{ AW_FF_EFFECT_THUD,		{ 1 } },
+	{ AW_FF_EFFECT_POP,		{ 4, 4, 4 } },
+	{ AW_FF_EFFECT_HEAVY_CLICK,	{ 4, 4, 4, 4 } },
 };
 
 static int ff_magnitude_to_gain(int16_t magnitude)
@@ -988,7 +988,7 @@ static const struct {
 	uint8_t gain;
 } aw_ff_strength_curve[] = {
 	{ 0x0000, 0x00 },
-	{ 0x3fff, 0x10 },
+	{ 0x3fff, 0x30 },
 	{ 0x5fff, 0x45 },
 	{ 0x7fff, 0x80 },
 };
