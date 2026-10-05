@@ -22,6 +22,30 @@
       },
       "revId": "79140c9e0a18171e826dbcbd58b3e132cc9cb0a5",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "69aad687_2cda74d7",
+        "filename": "drivers/misc/haptic_hv/haptic_hv_reg.h",
+        "patchSetId": 1
+      },
+      "lineNbr": 2974,
+      "author": {
+        "id": 37990
+      },
+      "writtenOn": "2026-10-05T19:51:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cde6d717_54ef262f",
+      "range": {
+        "startLine": 2970,
+        "startChar": 0,
+        "endLine": 2974,
+        "endChar": 3
+      },
+      "revId": "79140c9e0a18171e826dbcbd58b3e132cc9cb0a5",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
