@@ -16,6 +16,24 @@
       "message": "POP and THUD effects are deprecated, they are primitives now. See https://review.lineageos.org/q/I4cd0f84d97ea45c7a5c442df8174a597445df29a\n\nShould we implement all primitives as well?\n\nCLICK\nTHUD\nSPIN\nQUICK_RISE\nSLOW_RISE\nQUICK_FALL\nLIGHT_TICK\nLOW_TICK",
       "revId": "111f02d4a28248110032a067e528fe235d47ae7a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25e932da_1d1ed95e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 37990
+      },
+      "writtenOn": "2026-10-05T20:03:22Z",
+      "side": 1,
+      "message": "I\u0027m not against removing POP and THUD, but HAL still reports them as supported: https://github.com/LineageOS/android_vendor_qcom_opensource_vibrator/blob/lineage-23.2/aidl/VibratorOL/Vibrator.cpp#L704\n\nAdding the other primitives needs more RAM waves via replacing haptic_ram.bin. The format is in the datasheet and pretty straightforward but not very review friendly.\n\nI tested to see what\u0027s viable:\nSPIN and other frequency sweep type effects don\u0027t do much with this LRA. It is very narrowband. \nRISE/FALL with just amplitude works but would have to be played as many single waves via an additional loop in the driver, otherwise it\u0027s too large for SRAM.\nThe other effects won\u0027t be a problem, with LOW_TICK being significantly weaker than other effects. \n\nI\u0027ll look into this if RTP mode is ruled out, see: https://review.lineageos.org/c/LineageOS/android_kernel_fairphone_sm7635/+/506314/comments/46f666e5_baa84ab7",
+      "parentUuid": "bda26517_f7f4a92f",
+      "revId": "111f02d4a28248110032a067e528fe235d47ae7a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
