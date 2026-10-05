@@ -34,6 +34,24 @@
       "parentUuid": "bda26517_f7f4a92f",
       "revId": "111f02d4a28248110032a067e528fe235d47ae7a",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "16221071_8e2ef765",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4550
+      },
+      "writtenOn": "2026-10-05T21:53:40Z",
+      "side": 1,
+      "message": "At least LOW_TICK is important because it\u0027s used in brightness and volume sliders, currently it falls back to an effect that is too strong.",
+      "parentUuid": "25e932da_1d1ed95e",
+      "revId": "111f02d4a28248110032a067e528fe235d47ae7a",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
