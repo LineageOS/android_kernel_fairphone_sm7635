@@ -33,6 +33,24 @@
       "message": "This whole chain seems like something that might rather be implemented in userspace as a vibrator effect lib, like https://github.com/LineageOS/android_hardware_xiaomi/blob/lineage-23.2/vibrator/effect/effect.cpp",
       "revId": "3b72b1a4a58410f9b802403dae8fda1724965f85",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "36ff1d67_1c2774b6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 37990
+      },
+      "writtenOn": "2026-10-05T19:59:49Z",
+      "side": 1,
+      "message": "The current patchset is just fixing the driver to match spec + tuning.\nMoving waveforms to userspace would require RTP mode with a streaming backend, but it isn\u0027t set up on either side.\n\nI just tested RTP:\nStreaming works, but has a larger deadtime between effects (20 vs 30ms spacing with CLICK, auto-break off). This leaves:\n1. Support both RTP and RAM, with RAM for effects that need quick repetition\n2. Use RTP and concatenate waveforms somewhere along the way to get back repetition speed\n3. Sacrifice repetition speed and go RTP only\n4. Keep it in the driver with additional RAM waves\n\n1,2 are significant extra scope and complexity. I\u0027d rather go with 4 and add the remaining primitives.",
+      "parentUuid": "46f666e5_baa84ab7",
+      "revId": "3b72b1a4a58410f9b802403dae8fda1724965f85",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
