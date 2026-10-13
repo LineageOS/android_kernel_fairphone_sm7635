@@ -760,6 +760,8 @@ struct aw_haptic {
 	struct device *dev;
 	struct i2c_client *i2c;
 	struct input_dev *input_dev;
+	struct class ff_class;
+	uint16_t ff_duration_id;
 	struct semaphore sema;
 	struct work_struct gain_work;
 	struct work_struct input_vib_work;
