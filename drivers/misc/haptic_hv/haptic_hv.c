@@ -928,7 +928,7 @@ static void input_vib_work_routine(struct work_struct *work)
 			ram_vbat_comp(aw_haptic, false);
 			for (i = 0; i < aw_haptic->ff_seq_len; i++) {
 				aw_haptic->func->set_wav_seq(aw_haptic, i, aw_haptic->ff_seq[i]);
-				aw_haptic->func->set_wav_loop(aw_haptic, i, 0x00);
+				aw_haptic->func->set_wav_loop(aw_haptic, i, aw_haptic->ff_loop[i]);
 			}
 			if (i < AW_SEQUENCER_SIZE)
 				aw_haptic->func->set_wav_seq(aw_haptic, i, 0x00);
@@ -964,6 +964,7 @@ enum aw_ff_effect_id {
 struct aw_ff_effect {
 	int16_t id;
 	uint8_t seq[AW_SEQUENCER_SIZE];
+	uint8_t loop[AW_SEQUENCER_SIZE];
 };
 
 static const struct aw_ff_effect aw_ff_effects[] = {
@@ -1034,16 +1035,20 @@ static int ff_effect_to_seq(struct aw_haptic *aw_haptic, int16_t id)
 		slot = eff->seq[i];
 		if (slot & AW_SEQ_WAIT_FLAG) {
 			play_us += (slot & ~AW_SEQ_WAIT_FLAG) * AW_SEQ_WAIT_UNIT_SAMPLES *
-				   1000000U / AW_RAM_SAMPLE_RATE;
+				   1000U / (AW_RAM_SAMPLE_RATE / 1000);
 		} else {
 			if (slot > aw_haptic->ram.ram_num || slot > AW_RAM_WAVE_MAX ||
 			    !aw_haptic->ram.wave_len[slot]) {
 				aw_err("effect %d: wave %d not in ram", id, slot);
 				return -EINVAL;
 			}
-			play_us += aw_haptic->ram.wave_len[slot] * 1000000U / AW_RAM_SAMPLE_RATE;
+			if (eff->loop[i] > AW_SEQ_LOOP_MAX)
+				return -EINVAL;
+			play_us += (eff->loop[i] + 1) * (aw_haptic->ram.wave_len[slot] *
+				   1000U / (AW_RAM_SAMPLE_RATE / 1000));
 		}
 		aw_haptic->ff_seq[i] = slot;
+		aw_haptic->ff_loop[i] = eff->loop[i];
 	}
 	aw_haptic->ff_seq_len = i;
 

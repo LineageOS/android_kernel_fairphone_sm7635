@@ -88,6 +88,7 @@
 #define AW_SEQ_WAIT_MS(ms)			(AW_SEQ_WAIT_FLAG | \
 	(((ms) * (AW_RAM_SAMPLE_RATE / 1000) + AW_SEQ_WAIT_UNIT_SAMPLES / 2) / \
 	 AW_SEQ_WAIT_UNIT_SAMPLES))
+#define AW_SEQ_LOOP_MAX				(14)
 #define AW_GLBRD_STATE_MASK			(15<<0)
 #define AW_STATE_STANDBY			(0x00)
 #define AW_STATE_RTP				(0x08)
@@ -706,6 +707,7 @@ struct aw_haptic {
 	uint8_t seq[AW_SEQUENCER_SIZE];
 	uint8_t loop[AW_SEQUENCER_SIZE];
 	uint8_t ff_seq[AW_SEQUENCER_SIZE];
+	uint8_t ff_loop[AW_SEQUENCER_SIZE];
 	uint8_t ff_seq_len;
 	uint8_t name[15];
 	uint8_t trim_lra_boundary;
