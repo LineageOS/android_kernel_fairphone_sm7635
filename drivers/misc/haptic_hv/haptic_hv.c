@@ -977,16 +977,26 @@ struct aw_ff_effect {
 	uint16_t id;
 	uint8_t seq[AW_SEQUENCER_SIZE];
 	uint8_t loop[AW_SEQUENCER_SIZE];
+	uint8_t scale;
 };
 
 static const struct aw_ff_effect aw_ff_effects[] = {
-	{ AW_FF_EFFECT_CLICK,		{ 1 } },
-	{ AW_FF_EFFECT_DOUBLE_CLICK,	{ 1, AW_SEQ_WAIT_MS(100), 1 } },
-	{ AW_FF_EFFECT_TICK,		{ 3 } },
-	{ AW_FF_EFFECT_THUD,		{ 2 } },
-	{ AW_FF_EFFECT_POP,		{ 3 } },
-	{ AW_FF_EFFECT_HEAVY_CLICK,	{ 1 } },
-	{ AW_FF_PRIMITIVE_NOOP,		{ 0 } },
+	{ AW_FF_EFFECT_CLICK,		{ 9 }, { 0 }, 80 },
+	{ AW_FF_EFFECT_DOUBLE_CLICK,	{ 9, AW_SEQ_WAIT_MS(100), 9 }, { 0 }, 80 },
+	{ AW_FF_EFFECT_TICK,		{ 10 }, { 0 }, 100 },
+	{ AW_FF_EFFECT_THUD,		{ 9, AW_SEQ_WAIT_MS(10), 2 }, { 0, 0, 4 }, 100 },
+	{ AW_FF_EFFECT_POP,		{ 9 }, { 0 }, 80 },
+	{ AW_FF_EFFECT_HEAVY_CLICK,	{ 13 }, { 0 }, 70 },
+	{ AW_FF_PRIMITIVE_NOOP,		{ 0 }, { 0 }, 100 },
+	{ AW_FF_PRIMITIVE_CLICK,	{ 9 }, { 0 }, 80 },
+	{ AW_FF_PRIMITIVE_THUD,		{ 9, AW_SEQ_WAIT_MS(10), 2 }, { 0, 0, 4 }, 60 },
+	{ AW_FF_PRIMITIVE_SPIN,		{ 12 }, { 0 }, 60 },
+	{ AW_FF_PRIMITIVE_QUICK_RISE,	{ 1, 2, 3, 4, 5, 6, 7, 8 }, { 7, 6, 5, 3, 2 }, 30 },
+	{ AW_FF_PRIMITIVE_SLOW_RISE,	{ 1, 1, 1, 2, 3, 5, 7, 8 },
+					{ 14, 14, 14, 14, 12, 7, 3 }, 30 },
+	{ AW_FF_PRIMITIVE_QUICK_FALL,	{ 7, 1 }, { 10, 10 }, 30 },
+	{ AW_FF_PRIMITIVE_LIGHT_TICK,	{ 10 }, { 0 }, 100 },
+	{ AW_FF_PRIMITIVE_LOW_TICK,	{ 11 }, { 0 }, 100 },
 };
 
 static int ff_magnitude_to_gain(int16_t magnitude)
@@ -1002,7 +1012,7 @@ static const struct {
 	uint8_t gain;
 } aw_ff_strength_curve[] = {
 	{ 0x0000, 0x00 },
-	{ 0x3fff, 0x10 },
+	{ 0x3fff, 0x25 },
 	{ 0x5fff, 0x45 },
 	{ 0x7fff, 0x80 },
 };
@@ -1158,6 +1168,7 @@ static int input_upload_effect(struct input_dev *dev, struct ff_effect *effect,
 			aw_haptic->gain = ff_magnitude_to_gain(effect->u.periodic.magnitude);
 		else
 			aw_haptic->gain = ff_strength_to_gain(effect->u.periodic.magnitude);
+		aw_haptic->gain = aw_haptic->gain * eff->scale / 100;
 		data[1] = play_ms / 1000;
 		data[2] = play_ms % 1000;
 		if (copy_to_user(effect->u.periodic.custom_data, data, sizeof(data))) {
