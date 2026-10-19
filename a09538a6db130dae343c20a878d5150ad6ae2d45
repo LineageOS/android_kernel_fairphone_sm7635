@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "58f206c8_a93f3905",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 37990
+      },
+      "writtenOn": "2026-10-19T00:00:54Z",
+      "side": 1,
+      "message": "- f0 compensation isn\u0027t working, but probably not important. the submitted haptic_ram.bin was generated for 231.7Hz. and my other 1 year newer fp6 is at 233Hz, so within 0.6%.\n- You can check f0 via `cat /sys/class/leds/aw_vibrator/f0` while the phone is on a soft surface.\n- fp5 looks very similar and might even have the same f0, which would make an easy port\n- streaming instead of RAM is possible but there is very little to start with, so it\u0027s a much bigger change. \n- i recommend [vadiole.tremor](https://github.com/vadiole/tremor/releases) for testing",
+      "revId": "a09538a6db130dae343c20a878d5150ad6ae2d45",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    }
+  ]
+}
