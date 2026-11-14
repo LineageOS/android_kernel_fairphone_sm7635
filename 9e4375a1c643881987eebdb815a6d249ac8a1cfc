@@ -16,6 +16,23 @@
       "message": "Don\u0027t know how but, these got missed during the last common kernel sync",
       "revId": "9e4375a1c643881987eebdb815a6d249ac8a1cfc",
       "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4908ae50_51745c7f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 19979
+      },
+      "writtenOn": "2026-11-14T00:02:20Z",
+      "side": 1,
+      "message": "Tested on FP6 and FP6+",
+      "revId": "9e4375a1c643881987eebdb815a6d249ac8a1cfc",
+      "serverId": "1ec6b3db-b2c1-4fa4-84a2-4c7efe89ba71"
     }
   ]
 }
